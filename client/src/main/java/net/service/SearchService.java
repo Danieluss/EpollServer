@@ -43,6 +43,7 @@ public class SearchService {
     }
 
     private List<SearchResult> parseResponse(String response) {
+        System.out.println("Got response: " + response);
         Matcher matcher = responsePattern.matcher(response);
         List<SearchResult> resultList = new LinkedList<>();
         while (matcher.find()) {
