@@ -1,0 +1,3 @@
+searchServer:
+  port: 10101
+  ip: "127.0.0.1"

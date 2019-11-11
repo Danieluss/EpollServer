@@ -1,8 +1,8 @@
 rwildcard=$(wildcard $1$2) $(foreach d,$(wildcard $1*),$(call rwildcard,$d/,$2))
 
 CC := g++
-CFLAGS := -Wall
-LIBS := -lm
+CFLAGS := -Wall -std=c++17
+LIBS := -lm -lpthread
 
 SRC := src
 OBJ := out/obj
@@ -13,7 +13,7 @@ SOURCES := $(call rwildcard,$(SRC),*.cpp)
 INCLUDES := $(call rwildcard,$(INC),*.h)
 OBJECTS := $(patsubst $(SRC)/%.cpp, $(OBJ)/%.o, $(SOURCES))
 
-all: clean mkobj $(TARGET)
+all: clean mkobjdir $(TARGET)
 	rm -rf $(OBJ)
 
 $(TARGET): $(OBJECTS)
@@ -21,13 +21,13 @@ $(TARGET): $(OBJECTS)
 
 $(OBJ)/%.o: $(SRC)/%.cpp $(INCLUDES)
 	mkdir -p `dirname $@`
-	$(CC) -I$(SRC) -I$(INC) -c $< -o $@
+	$(CC) ${CFLAGS} -I$(SRC) -I$(INC) -c $< -o $@
 
-mkobj:
+mkobjdir:
 	mkdir -p $(OBJ)
 
 clean:
 	rm -rf $(OBJ)
 	rm -f $(TARGET)
 
-.PHONY: clean mkobj all
+.PHONY: clean mkobjdir all

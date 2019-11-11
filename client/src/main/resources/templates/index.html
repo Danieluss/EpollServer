@@ -1,0 +1,31 @@
+<!DOCTYPE HTML>
+<html xmlns:th="http://www.w3.org/1999/xhtml">
+<head>
+    <title>Getting Started: Serving Web Content</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+    <link href="../static/css/main.css" th:href="@{/css/main.css}" rel="stylesheet" />
+</head>
+<body>
+<form th:action="@{/}" method="post" class="searchForm">
+    <input type="text" th:value="${searchQuery}" name="searchQuery" class="searchField"/>
+    <input type="submit" class="searchButton"/>
+</form>
+<table class="results">
+    <thead>
+    <tr th:if="${searchResults != null && !searchResults.empty}">
+        <th> Title</th>
+        <th> URL</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr th:if="${searchResults != null && searchResults.empty}">
+        <td colspan="2"> No search results</td>
+    </tr>
+    <tr th:each="searchResult : ${searchResults}">
+        <td><span th:text="${searchResult.title}"> Title </span></td>
+        <td><span th:text="${searchResult.url}"> URL </span></td>
+    </tr>
+    </tbody>
+</table>
+</body>
+</html>
