@@ -10,7 +10,7 @@
 #include "utils.h"
 
 
-class DynamicThreadPool {
+class DynamicThreadPoolExecutor {
 
     volatile int lower_bound;
     volatile int upper_bound;
@@ -27,7 +27,7 @@ class DynamicThreadPool {
 
 public:
 
-    DynamicThreadPool(int lower_bound = 1, int upper_bound = std::thread::hardware_concurrency());
+    DynamicThreadPoolExecutor(int lower_bound = 1, int upper_bound = std::thread::hardware_concurrency());
 
     void grow(int n_threads);
 
@@ -39,7 +39,7 @@ public:
 
     void finish();
 
-    virtual ~DynamicThreadPool();
+    virtual ~DynamicThreadPoolExecutor();
 
 };
 

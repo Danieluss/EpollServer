@@ -1,9 +1,9 @@
 <!DOCTYPE HTML>
 <html xmlns:th="http://www.w3.org/1999/xhtml">
 <head>
-    <title>Getting Started: Serving Web Content</title>
+    <title>Search engine</title>
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
-    <link href="../static/css/main.css" th:href="@{/css/main.css}" rel="stylesheet" />
+    <link href="../static/css/main.css" th:href="@{/css/main.css}" rel="stylesheet"/>
 </head>
 <body>
 <form th:action="@{/}" method="post" class="searchForm">
@@ -13,19 +13,27 @@
 <table class="results">
     <thead>
     <tr th:if="${searchResults != null && !searchResults.empty}">
-        <th> Title</th>
-        <th> URL</th>
+        <th class="maximize">Search results</th>
+    </tr>
+    <tr th:if="${searchError != null}">
+        <th th:text="${searchError}" class="errors"></th>
     </tr>
     </thead>
     <tbody>
-    <tr th:if="${searchResults != null && searchResults.empty}">
-        <td colspan="2"> No search results</td>
+    <tr th:if="${searchResults.content == null || searchResults.content.empty}">
+        <td> No search results</td>
     </tr>
-    <tr th:each="searchResult : ${searchResults}">
-        <td><span th:text="${searchResult.title}"> Title </span></td>
-        <td><span th:text="${searchResult.url}"> URL </span></td>
+    <tr th:if="${searchResults.content != null && !searchResults.content.empty}" th:each="searchResult, _ : ${searchResults.content}">
+        <td class="result"><a th:href="${searchResult.url}"><div class="maximize"><span th:text="${searchResult.description}"> Title </span></div></a></td>
     </tr>
     </tbody>
 </table>
+
+<div th:if="${searchResults.totalPages > 0}" class="pagination"
+     th:each="pageNumber : ${pageNumbers}">
+    <a th:href="@{/(size=${searchResults.size}, pageSize=${pageNumber})}"
+       th:text=${pageNumber}
+       th:class="${pageNumber==searchResults.number + 1} ? active"></a>
+</div>
 </body>
 </html>

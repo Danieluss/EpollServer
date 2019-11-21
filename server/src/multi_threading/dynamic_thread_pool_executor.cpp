@@ -1,13 +1,13 @@
-#include "service/dynamic_thread_pool_executor.h"
 #include <iostream>
+#include "multi_threading/dynamic_thread_pool_executor.h"
 
-DynamicThreadPool::DynamicThreadPool(int lower_bound, int upper_bound) {
+DynamicThreadPoolExecutor::DynamicThreadPoolExecutor(int lower_bound, int upper_bound) {
     this->lower_bound = lower_bound;
     this->upper_bound = upper_bound;
     grow(lower_bound);
 }
 
-void DynamicThreadPool::worker_thread() {
+void DynamicThreadPoolExecutor::worker_thread() {
     while (true) {
         std::function<void()> task;
         {
@@ -34,7 +34,7 @@ void DynamicThreadPool::worker_thread() {
     std::cout<<"Thread "<<std::this_thread::get_id()<<" is dying"<<std::endl;
 }
 
-void DynamicThreadPool::grow(int n_threads) {
+void DynamicThreadPoolExecutor::grow(int n_threads) {
     {
         std::lock_guard<decltype(mutex)> lock(mutex);
         int max = upper_bound - curr_threads;
@@ -52,7 +52,7 @@ void DynamicThreadPool::grow(int n_threads) {
                 }
             }
             for (int i = 0; i < n_threads; ++i) {
-                std::thread thread(&DynamicThreadPool::worker_thread, this);
+                std::thread thread(&DynamicThreadPoolExecutor::worker_thread, this);
                 std::cout<<"Creating "<<thread.get_id()<<std::endl;
                 thread.detach();
             }
@@ -61,7 +61,7 @@ void DynamicThreadPool::grow(int n_threads) {
     }
 }
 
-void DynamicThreadPool::shrink(int n_threads) {
+void DynamicThreadPoolExecutor::shrink(int n_threads) {
     {
         std::lock_guard<decltype(mutex)> lock(mutex);
         int min = curr_threads - lower_bound;
@@ -76,7 +76,7 @@ void DynamicThreadPool::shrink(int n_threads) {
     cond_var.notify_all();
 }
 
-void DynamicThreadPool::enqueue_task(std::function<void()> task) {
+void DynamicThreadPoolExecutor::enqueue_task(std::function<void()> task) {
     std::cout<<"Enqueuing task"<<std::endl;
     {
         std::lock_guard<decltype(mutex)> lock(mutex);
@@ -89,7 +89,7 @@ void DynamicThreadPool::enqueue_task(std::function<void()> task) {
     cond_var.notify_one();
 }
 
-void DynamicThreadPool::cancel_pending() {
+void DynamicThreadPoolExecutor::cancel_pending() {
     {
         std::lock_guard<decltype(mutex)> lock(mutex);
         tasks.clear();
@@ -97,7 +97,7 @@ void DynamicThreadPool::cancel_pending() {
     std::cout<<"Cancelling pending requests "<<std::endl;
 }
 
-void DynamicThreadPool::finish() {
+void DynamicThreadPoolExecutor::finish() {
     {
         std::lock_guard<decltype(mutex)> lock(mutex);
         tasks.clear();
@@ -108,7 +108,7 @@ void DynamicThreadPool::finish() {
     std::cout<<"Killing all threads"<<std::endl;
 }
 
-DynamicThreadPool::~DynamicThreadPool() {
+DynamicThreadPoolExecutor::~DynamicThreadPoolExecutor() {
     finish();
-    std::cout<<"Destructing DynamicThreadPool"<<std::endl;
+    std::cout<<"Destructing DynamicThreadPoolExecutor"<<std::endl;
 }

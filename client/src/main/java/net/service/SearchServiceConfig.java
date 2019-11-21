@@ -4,6 +4,8 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Scope;
+import org.springframework.context.annotation.ScopedProxyMode;
+import org.springframework.web.context.WebApplicationContext;
 
 import java.io.IOException;
 import java.net.Socket;
@@ -18,7 +20,7 @@ public class SearchServiceConfig {
     private Integer searchServerPort;
 
     @Bean
-    @Scope("prototype")
+    @Scope(value = WebApplicationContext.SCOPE_REQUEST, proxyMode = ScopedProxyMode.TARGET_CLASS)
     public Socket clientSocket() throws IOException {
         return new Socket(searchServerIP, searchServerPort);
     }
