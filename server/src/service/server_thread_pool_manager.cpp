@@ -1,4 +1,5 @@
 #include "service/server_thread_pool_manager.h"
+#include "multi_threading/synch_logger.h"
 #include <unistd.h>
 
 void ServerThreadPoolManager::grow(int n_threads) {
@@ -6,6 +7,7 @@ void ServerThreadPoolManager::grow(int n_threads) {
         n_threads = upper_bound;
     }
     for (int i = servers.size(); i < n_threads; i++) {
+        synch_log.print("Growing pool...\n");
         servers.push_back(new EpollServer(config));
         servers.back()->run_asynch();
     }
@@ -16,6 +18,7 @@ void ServerThreadPoolManager::_shrink(int n_threads) {
         EpollServer* server = servers.back();
         servers.pop_back();
         server->stop();
+        synch_log.print("Shrinking pool...\n");
     }
 }
 

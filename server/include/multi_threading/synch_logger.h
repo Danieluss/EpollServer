@@ -4,6 +4,7 @@
 #include <mutex>
 #include <iostream>
 #include <thread>
+#include <string>
 
 class SynchLogger {
     mutable std::shared_mutex mutex;
@@ -18,9 +19,16 @@ public:
     }
 
     template<typename... Args>
+    void eprint(const char *format, Args... args) const {
+        std::unique_lock lock(mutex);
+        fprintf(stderr, ("[%d] - " + std::string(format)).c_str(), std::this_thread::get_id(), args...);
+    }
+
+    template<typename... Args>
     void perror(const char *msg) const {
         std::unique_lock lock(mutex);
-        perror(msg);
+        std::cerr<<"["<<std::this_thread::get_id()<<"] - "<<msg<<std::endl;
+        perror("");
     }
 };
 

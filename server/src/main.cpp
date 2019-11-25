@@ -2,6 +2,7 @@
 #include <chrono>
 #include <thread>
 #include <bits/stdc++.h>
+#include <unistd.h>
 #include "service/epoll_server.h"
 #include "multi_threading/synch_logger.h"
 #include "service/server_thread_pool_manager.h"
