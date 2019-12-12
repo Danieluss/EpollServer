@@ -177,7 +177,7 @@ void EpollServer::respond(int connection_fd) {
         synch_log.perror("write()");
     }
     fd_pending_response_map[connection_fd] = response + response_count;
-    if (response[0] == '\0') {
+    if (fd_pending_response_map[connection_fd][0] == '\0') {
         close(connection_fd);
         synch_log.print("Responded to connection %d with \n------\n%s\n------\n", connection_fd,
                         fd_response_map[connection_fd].c_str());
