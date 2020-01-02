@@ -13,6 +13,8 @@ SOURCES := $(call rwildcard,$(SRC),*.cpp)
 INCLUDES := $(call rwildcard,$(INC),*.h)
 OBJECTS := $(patsubst $(SRC)/%.cpp, $(OBJ)/%.o, $(SOURCES))
 
+.PHONY: clean mkobjdir all
+
 all: clean mkobjdir $(TARGET)
 	rm -rf $(OBJ)
 
@@ -29,5 +31,3 @@ mkobjdir:
 clean:
 	rm -rf $(OBJ)
 	rm -f $(TARGET)
-
-.PHONY: clean mkobjdir all

@@ -1,28 +1,47 @@
 # Search engine
 
 
-### Build
-When in SearchEngine folder:
+#### Build
+In SearchEngine folder:
 ```
 make
 ```
+
+## Client
+In SearchEngine/client folder:
+
+#### Build
+```
+make
+```
+
+#### Run
+```
+./run.sh
+```
+
+#### Build & run
+```
+./build&run.sh
+```
+
 
 ## Server
-When in SearchEngine/server folder:
+In SearchEngine/server folder:
 
-### Build
+#### Build
 ```
 make
 ```
 
-### Run
+#### Run
 ```
-./out/main.out
+./run.sh
 ```
 
-### Build & run
+#### Build & run
 ```
-./build-run.sh
+./build&run.sh
 ```
 
 

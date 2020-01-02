@@ -108,8 +108,10 @@ void EpollServer::accept_connection() {
                         addr_buff, sizeof(addr_buff),
                         port_buff, sizeof(port_buff),
                         NI_NUMERICHOST) == 0) {
+#ifdef DEBUG
             synch_log.print("Accepted connection from %s:%s\n",
                             addr_buff, port_buff);
+#endif
         }
 
         make_socket_non_blocking(connection_fd);
@@ -166,7 +168,9 @@ void EpollServer::forge_response(int connection_fd) {
             synch_log.perror("epoll_ctl()");
             exit(1);
         }
+#ifdef DEBUG
         synch_log.print("Forged response for connection no %d\n", connection_fd);
+#endif
     }
 }
 
@@ -179,8 +183,10 @@ void EpollServer::respond(int connection_fd) {
     fd_pending_response_map[connection_fd] = response + response_count;
     if (fd_pending_response_map[connection_fd][0] == '\0') {
         close(connection_fd);
+#ifdef DEBUG
         synch_log.print("Responded to connection %d with \n------\n%s\n------\n", connection_fd,
                         fd_response_map[connection_fd].c_str());
+#endif
         fd_request_map.erase(connection_fd);
         fd_response_map.erase(connection_fd);
         fd_pending_response_map.erase(connection_fd);

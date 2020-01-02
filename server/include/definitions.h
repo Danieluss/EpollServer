@@ -1,8 +1,6 @@
-//
-// Created by danieluss on 03.01.2020.
-//
-
 #ifndef SEARCHENGINE_DEFINITIONS_H
 #define SEARCHENGINE_DEFINITIONS_H
+
+#define DEBUG
 
 #endif //SEARCHENGINE_DEFINITIONS_H

@@ -5,6 +5,7 @@
 #include <iostream>
 #include <thread>
 #include <string>
+#include "definitions.h"
 
 class SynchLogger {
     mutable std::shared_mutex mutex;
