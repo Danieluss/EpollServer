@@ -1,0 +1,6 @@
+#ifndef HTML_GETTER_HPP
+#define HTML_GETTER_HPP
+
+
+
+#endif //HTML_GETTER_HPP
