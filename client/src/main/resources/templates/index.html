@@ -10,7 +10,7 @@
     <input type="text" th:value="${searchQuery}" name="searchQuery" class="searchField"/>
     <input type="submit" class="searchButton"/>
 </form>
-<table class="results">
+<table class="results" th:if="${searchResults != null}">
     <thead>
     <tr th:if="${searchResults != null && !searchResults.empty}">
         <th class="maximize">Search results</th>
@@ -20,20 +20,14 @@
     </tr>
     </thead>
     <tbody>
-    <tr th:if="${searchResults.content == null || searchResults.content.empty}">
+    <tr th:if="${searchResults == null || searchResults.isEmpty()}">
         <td> No search results</td>
     </tr>
-    <tr th:if="${searchResults.content != null && !searchResults.content.empty}" th:each="searchResult, _ : ${searchResults.content}">
+    <tr th:if="${searchResults != null && !searchResults.isEmpty()}" th:each="searchResult, _ : ${searchResults}">
         <td class="result"><a th:href="${searchResult.url}"><div class="maximize"><span th:text="${searchResult.description}"> Title </span></div></a></td>
     </tr>
     </tbody>
 </table>
 
-<div th:if="${searchResults.totalPages > 0}" class="pagination"
-     th:each="pageNumber : ${pageNumbers}">
-    <a th:href="@{/(size=${searchResults.size}, pageSize=${pageNumber})}"
-       th:text=${pageNumber}
-       th:class="${pageNumber==searchResults.number + 1} ? active"></a>
-</div>
 </body>
 </html>
