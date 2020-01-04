@@ -64,11 +64,7 @@ string HTMLParser::parseTag() {
     if(checkSubstring("!--")) {
         position+=3;
         parseComment();
-        cerr << "Comment ";
-        for(int i=-5; i < 5; i++) {
-            cerr << html[position+i];
-        }
-        cerr << "\n";
+        return "-->";
     }
     string tag="";
     if(position < SIZE(html) && html[position] == 0x2f) {
@@ -116,11 +112,11 @@ string HTMLParser::parseTag() {
             currentAttr.name+= tolower(c);
         }
     }
-    cerr << tag << "\t";
-    for(HTMLAttr a : attributes) {
-        cerr << a.name << "=" << a.value << ", ";
-    }
-    cerr << "\n";
+    // cerr << tag << "\t";
+    // for(HTMLAttr a : attributes) {
+    //     cerr << a.name << "=" << a.value << ", ";
+    // }
+    // cerr << "\n";
     if(tag == "a") {
         for(HTMLAttr a : attributes) {
             if(a.name == "href") {
@@ -189,9 +185,14 @@ void HTMLParser::parse() {
             if(isalnum(c)) {
                 word+=c;
             } else if(c < 0 && position+1 < SIZE(html)) {
-                word+=c;
                 position++;
-                word+=html[position];    
+                char d = html[position];
+                if(c != 0xc2-0x100 || d != 0xa0-0x100) { //don't add nbsp as a character in a word
+                    word+=c;
+                    word+=html[position];
+                } else {
+                    addWord(word);
+                }
                 text+=html[position];
             } else {
                 addWord(word);
@@ -202,7 +203,7 @@ void HTMLParser::parse() {
         addWord(word);
         position++;
         string t = parseTag();
-        cerr << t << "\n";
+        // cerr << t << "\n";
         if(t == "<script>") {
             waitForToken("</script>");
         } else if(t == "<style>") {
@@ -228,7 +229,6 @@ void HTMLParser::report() {
             break;
         }
     }
-    cerr << "\n";
     // cout << "\nLinks\n";
     // for(string u : links) {
     //     cout << u << "\n";

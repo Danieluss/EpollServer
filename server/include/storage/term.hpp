@@ -1,12 +1,15 @@
 #ifndef TERM_HPP
 #define TERM_HPP
 
-#include<vector>
+#include<bits/stdc++.h>
 using namespace std;
 
 struct Term {
     int id;
-    vector<int> documents;
+    unordered_set<int> documents;
 };
+
+istream& operator>>(istream& stream, Term &t);
+ostream& operator<<(ostream& stream, Term &t);
 
 #endif //TERM_HPP

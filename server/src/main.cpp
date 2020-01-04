@@ -29,11 +29,18 @@ string read_file(string filename) {
 }
 
 int main() {
-    string s = read_file("test.html");
-    HTMLParser p(s, "https://test.pl/");
-    p.parse();
-    p.report();
+    // string s = read_file("test.html");
+    // HTMLParser p(s, "https://test.pl/");
+    // p.parse();
+    // p.report();
+
     // Crawler crawler;
     // crawler.updateLinks({"https://skijumping.pl/"});
     // crawler.run();
+
+    Storage storage;
+    string s = "ABCeeeFGąęśżźćńóĄĘŚŻŹĆŃÓ äöüß ÄÖÜß";
+    cout << s << "\n";
+    s = storage.tolower(s);
+    cout << s << "\n";
 }

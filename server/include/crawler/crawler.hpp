@@ -12,9 +12,14 @@ private:
     HTMLFetcher htmlFetcher;
     priority_queue<Link> links;
     unordered_set<string> visited;
+    string linksFile = "links";
+    string visitedFile = "visited";
+    void save();
+    void load();
 public:
+    Crawler();
     void updateLinks(vector<string> links);
-    void run();
+    void run(int limit);
 };
 
 #endif //CRAWLER_HPP

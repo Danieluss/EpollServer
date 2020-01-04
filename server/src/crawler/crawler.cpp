@@ -1,4 +1,30 @@
 #include"crawler/crawler.hpp"
+#include"utils.h"
+#include"utils.cpp"
+
+void Crawler::save() {
+    storage.save();
+    vector<string> linksVector;
+    while(!links.empty()) {
+        linksVector.push_back(links.top().url);
+        links.pop();
+    }
+    writeObjectToFile(linksFile, linksVector);
+    writeObjectToFile(visitedFile, visited);
+}
+
+void Crawler::load() {
+    vector<string> linksVector;
+    writeObjectToFile(linksFile, linksVector);
+    writeObjectToFile(visitedFile, visited);
+    for(string &s : linksVector) {
+        links.push(Link(s));
+    }
+}
+
+Crawler::Crawler() {
+    load();
+}
 
 void Crawler::updateLinks(vector<string> links) {
     for(string l : links) {
@@ -9,11 +35,12 @@ void Crawler::updateLinks(vector<string> links) {
     }
 }
 
-void Crawler::run() {
+void Crawler::run(int limit) {
     int counter=0;
     while(!links.empty()) {
         Link l = links.top();
         links.pop();
+        cerr << "Links size " << SIZE(links) << "\n";
 
         string html;
         int code;
@@ -36,9 +63,9 @@ void Crawler::run() {
             storage.add(htmlParser);
         }
         counter++;
-        if(counter > 50) {
+        if(counter > limit) {
             break;
         }
     }
-    //TODO save storage, links and visited
+    save();
 }
