@@ -54,6 +54,9 @@ void HTMLParser::addLink(string link) {
     } else if(regex_match(link, rel)) {
         link = baseurl + link;
     }
+    if(link.back() == '/') {
+        link.pop_back();
+    }
     regex valid("https?://.+");
     if(regex_match(link, valid)) {
         links.push_back(link);
@@ -167,10 +170,44 @@ void HTMLParser::sanitize_html() {
     }
 }
 
+void HTMLParser::parseText(string &word) {
+    char c = html[position];
+    if(spaceCharacters.count(c) == 0 || (SIZE(text) && spaceCharacters.count(text.back()) == 0)) {
+        text+=c;
+    }
+    if(isalnum(c)) {
+        word+=c;
+    } else if(c < 0 && position+1 < SIZE(html)) {
+        position++;
+        char d = html[position];
+        string s;
+        s.push_back(c);
+        s.push_back(d);
+        bool converted = true;
+        u16string w;
+        try {
+            w = convert.from_bytes(s);
+        } catch(exception &e) {
+            converted = false;
+        }
+        if(converted && iswalpha(w[0])) {
+            word+=c;
+            word+=html[position];
+        } else {
+            addWord(word);
+        }
+        text+=html[position];
+    } else {
+        addWord(word);
+    }
+    position++;
+}
+
 HTMLParser::HTMLParser(string html, string url) : html(html), url(url) {
     position = 0;
     baseurl = getBaseUrl(url);
     sanitize_html();
+    setlocale(LC_ALL, "");
     // cerr << baseurl << "\n";
 }
 
@@ -178,26 +215,7 @@ void HTMLParser::parse() {
     string word="";
     while(position < SIZE(html)) {
         if(html[position] != '<') {
-            char c = html[position];
-            if(spaceCharacters.count(c) == 0 || (SIZE(text) && spaceCharacters.count(text.back()) == 0)) {
-                text+=c;
-            }
-            if(isalnum(c)) {
-                word+=c;
-            } else if(c < 0 && position+1 < SIZE(html)) {
-                position++;
-                char d = html[position];
-                if(c != 0xc2-0x100 || d != 0xa0-0x100) { //don't add nbsp as a character in a word
-                    word+=c;
-                    word+=html[position];
-                } else {
-                    addWord(word);
-                }
-                text+=html[position];
-            } else {
-                addWord(word);
-            }
-            position++;
+            parseText(word);
             continue;
         }
         addWord(word);

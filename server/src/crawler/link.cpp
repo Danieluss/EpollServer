@@ -10,7 +10,10 @@ Link::Link(string url) : url(url) {
 int Link::compute_depth() {
     regex r("https?://[A-Za-z\\.]+(.*)");
     smatch m;
-    assert(regex_match(url, m, r));
+    if(!regex_match(url, m, r)) {
+        cerr << url;
+        return 100;
+    } 
     string s = m[1].str();
     int res=0;
     for(char c : s) {

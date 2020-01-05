@@ -1,7 +1,7 @@
 #ifndef ENTRY_HPP
 #define ENTRY_HPP
 
-#include<string>
+#include<bits/stdc++.h>
 
 using namespace std;
 
@@ -10,5 +10,7 @@ struct Entry {
     string url;
     string description;
 };
+
+ostream& operator<<(ostream& stream, Entry &e);
 
 #endif //ENTRY_HPP

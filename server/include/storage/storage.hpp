@@ -18,15 +18,17 @@ private:
     unordered_map<int, Document> documents;
     string termsFile = "terms";
     string documentsFile = "documents";
+    wstring_convert<codecvt_utf8_utf16<char16_t>,char16_t> convert;
     void load();
     vector<string> split(string &s);
     vector<double> normalize(vector<double> v);
+    double cosv(vector<double> a, vector<double> b);
     double dot(vector<double> a, vector<double> b);
     double computeScore(Document &d, vector<pii> &activeTerms);
     Entry prepareEntry(Document &d, vector<pii> &activeTerms);
 public:
     Storage();
-    void add(HTMLParser html);
+    void add(HTMLParser &html);
     void save();
     
     vector<Entry> query(string query, int limit);

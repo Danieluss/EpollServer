@@ -15,8 +15,8 @@ void Crawler::save() {
 
 void Crawler::load() {
     vector<string> linksVector;
-    writeObjectToFile(linksFile, linksVector);
-    writeObjectToFile(visitedFile, visited);
+    readObjectFromFile(linksFile, linksVector);
+    readObjectFromFile(visitedFile, visited);
     for(string &s : linksVector) {
         links.push(Link(s));
     }

@@ -7,6 +7,7 @@ void Storage::load() {
     readObjectFromFile(documentsFile, documents);
     nextTerm = SIZE(terms);
     nextDocument = SIZE(documents);
+    // cerr << nextTerm << " " << nextDocument << "\n";
 }
 
 void Storage::save() {
@@ -15,26 +16,22 @@ void Storage::save() {
 }
 
 Storage::Storage() {
-    // load();
+    load();
 }
 
 string Storage::tolower(string &s) {
-    // cerr << setlocale(LC_CTYPE, "en_US.UTF-8") << "\n";
-    wstring w(s.begin(), s.end());
-    int cou=0;
+    u16string w = convert.from_bytes(s);
     for(auto it = w.begin(); it != w.end(); it++) {
-        cerr << (*it) << " ";
-        *it = towlower(*it);
-        cou++;
+        (*it) = towlower(*it);
     }
-
-    cerr << "Sizes comparison: " << cou << " " << s.size() << "\n";
-    return string(w.begin(), w.end());
+    string res = convert.to_bytes(w);
+    return res;
 }
 
-void Storage::add(HTMLParser html) {
-    Document d(html.getTitle(), html.getUrl());
-    documents[nextDocument] = d;
+void Storage::add(HTMLParser &html) {
+    Document doc(html.getTitle(), html.getUrl());
+    documents[nextDocument] = doc;
+    Document &d = documents[nextDocument];
 
     vector<string> words = html.getWords();
     for(string &w : words) {
@@ -44,7 +41,13 @@ void Storage::add(HTMLParser html) {
             t.id = nextTerm++;
             terms[u] = t;
         }
-        terms[u].documents.insert(nextDocument);
+        Term &currentTerm = terms[u];
+        currentTerm.documents.insert(nextDocument);
+        if(!d.terms.count(currentTerm.id)) {
+            d.terms[currentTerm.id] = 0;
+        }
+        d.terms[currentTerm.id]++;
+        d.wordcount++;
     }
     nextDocument++;
 }
@@ -54,7 +57,7 @@ vector<string> Storage::split(string &s) {
     return vector<string> (std::istream_iterator<std::string>{iss}, std::istream_iterator<std::string>());
 }
 
-vector<double> normalize(vector<double> v) {
+vector<double> Storage::normalize(vector<double> v) {
     double l = 0;
     for(double vi : v) {
         l+=vi*vi;
@@ -66,9 +69,7 @@ vector<double> normalize(vector<double> v) {
     return v;
 }
 
-double dot(vector<double> a, vector<double> b) {
-    a = normalize(a);
-    b = normalize(b);
+double Storage::dot(vector<double> a, vector<double> b) {
     double res=0;
     for(int i=0; i < SIZE(a); i++) {
         res+=a[i]*b[i];
@@ -76,8 +77,11 @@ double dot(vector<double> a, vector<double> b) {
     return res;
 }
 
+double Storage::cosv(vector<double> a, vector<double> b) {
+    return dot(normalize(a), normalize(b));
+}
+
 double Storage::computeScore(Document &document, vector<pii> &activeTerms) {
-    double score=0;
     int n = SIZE(activeTerms);
     vector<double> d(n), q(n);
     for(int i=0; i < n; i++) {
@@ -92,7 +96,7 @@ double Storage::computeScore(Document &document, vector<pii> &activeTerms) {
         int tf = it->second;
         d[i] = log(1+tf);
     }
-    return score;
+    return dot(d, q);
 }
 
 Entry Storage::prepareEntry(Document &d, vector<pii> &activeTerms) {
@@ -120,6 +124,10 @@ vector<Entry> Storage::query(string text, int limit) {
         }
     }
 
+    if(minTerm == NULL) {
+        return {};
+    }
+
     priority_queue<pair<double, int>> entries;
 
     for(int documentId : (minTerm->documents)) {
@@ -133,6 +141,7 @@ vector<Entry> Storage::query(string text, int limit) {
     vector<Entry> list;
     while(!entries.empty()) {
         auto p = entries.top();
+        // cerr << -p.first << "\n";
         entries.pop();
         list.push_back(prepareEntry(documents[p.second], activeTerms));
     }

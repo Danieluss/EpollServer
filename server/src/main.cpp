@@ -29,18 +29,12 @@ string read_file(string filename) {
 }
 
 int main() {
-    // string s = read_file("test.html");
-    // HTMLParser p(s, "https://test.pl/");
-    // p.parse();
-    // p.report();
-
     // Crawler crawler;
     // crawler.updateLinks({"https://skijumping.pl/"});
-    // crawler.run();
-
+    // crawler.run(1000);
     Storage storage;
-    string s = "ABCeeeFGąęśżźćńóĄĘŚŻŹĆŃÓ äöüß ÄÖÜß";
-    cout << s << "\n";
-    s = storage.tolower(s);
-    cout << s << "\n";
+    vector<Entry> entries = storage.query("wolfram alpha", 10);
+    for(Entry &e : entries) {
+        cerr << e << "\n";
+    }
 }
