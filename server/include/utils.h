@@ -35,4 +35,6 @@ void readObjectFromFile(string filename, T &t);
 template<class T>
 void writeObjectToFile(string filename, T &t);
 
+const string filesPath = "res/";
+
 #endif //SEARCHENGINE_UTILS_H

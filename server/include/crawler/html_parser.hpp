@@ -17,6 +17,7 @@ private:
     string baseurl;
     int position;
     set<int> spaceCharacters {0x20, 0x9, 0xa, 0xc, 0xff, 0xd};
+    wstring_convert<codecvt_utf8_utf16<char16_t>,char16_t> convert;
     inline bool checkSubstring(string s);
     void waitForToken(string token);
     string waitForTokenAndReturnContent(string token);
@@ -27,6 +28,7 @@ private:
     void addWord(string &word); 
     string getBaseUrl(string url);
     void sanitize_html();
+    void parseText(string &word);
 public:
     HTMLParser(string html, string url);
     void parse();

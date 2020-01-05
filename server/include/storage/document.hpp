@@ -12,6 +12,7 @@ struct Document {
     unordered_map<int, int> terms;
     Document();
     Document(string title, string url);
+    string sanitizeTitle(string s);
 };
 
 ostream& operator<<(ostream& stream, Document &d);

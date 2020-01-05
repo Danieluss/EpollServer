@@ -2,9 +2,23 @@
 #include"utils.h"
 #include"utils.cpp"
 
-Document::Document() {}
+Document::Document() {
+    wordcount = 0;
+}
 
-Document::Document(string title, string url) : title(title), url(url) {}
+Document::Document(string title, string url) : Document() {
+    this->title = sanitizeTitle(title);
+    this->url = url;
+}
+
+string Document::sanitizeTitle(string s) {
+    for(int i=0; i < SIZE(s); i++) {
+        if(s[i] == '\n' && (i > 0 || s[i-1] >= 0)) {
+            s[i] = ' ';
+        }
+    }
+    return s;
+}
 
 ostream& operator<<(ostream& stream, Document &d) {
     stream << d.title << "\n";
@@ -15,6 +29,8 @@ ostream& operator<<(ostream& stream, Document &d) {
 }
 
 istream& operator>>(istream& stream, Document &d) {
+    string s;
+    getline(stream, s);
     getline(stream, d.title);
     stream >> d.url;
     stream >> d.wordcount;

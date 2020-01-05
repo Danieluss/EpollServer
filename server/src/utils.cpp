@@ -2,7 +2,7 @@
 
 template<class T, class U>
 ostream& operator<<(ostream& stream, pair<T, U> &p) {
-    return (stream << p.first << " " << p.second);
+    return (stream << p.first << "\n" << p.second);
 }
 
 template<class T, class U>
@@ -73,14 +73,18 @@ istream& operator>>(istream& stream, unordered_map<T, U> &m) {
 
 template<class T>
 void readObjectFromFile(string filename, T &t) {
-    ifstream stream(filename);
+    ifstream stream(filesPath + filename);
+    if(stream.fail()) {
+        return;
+    }
     stream >> t;
     stream.close();
 }
 
 template<class T>
 void writeObjectToFile(string filename, T &t) {
-    string currentFilename = to_string(time(0)) + filename;
+    filename = filesPath + filename;
+    string currentFilename = filename + to_string(time(0));
     ofstream stream(currentFilename);
     stream << t;
     stream.close();
