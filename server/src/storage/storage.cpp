@@ -29,7 +29,7 @@ string Storage::tolower(string &s) {
 }
 
 void Storage::add(HTMLParser &html) {
-    Document doc(html.getTitle(), html.getUrl());
+    Document doc(html.getTitle(), html.getUrl(), html.getDescription());
     documents[nextDocument] = doc;
     Document &d = documents[nextDocument];
 
@@ -103,11 +103,12 @@ Entry Storage::prepareEntry(Document &d, vector<pii> &activeTerms) {
     Entry e;
     e.title = d.title;
     e.url = d.url;
-    //TODO description
+    e.description = d.description;
     return e;
 }
 
-vector<Entry> Storage::query(string text, int limit) {
+pair<vector<Entry>, int> Storage::query(int page, int pageSize, string text) {
+    int limit = (page+1)*pageSize;
     vector<string> q = split(text);
     vector<pii> activeTerms;
     Term *minTerm = NULL;
@@ -125,7 +126,7 @@ vector<Entry> Storage::query(string text, int limit) {
     }
 
     if(minTerm == NULL) {
-        return {};
+        return {{}, 0};
     }
 
     priority_queue<pair<double, int>> entries;
@@ -139,12 +140,12 @@ vector<Entry> Storage::query(string text, int limit) {
     }
 
     vector<Entry> list;
-    while(!entries.empty()) {
+    while(page*pageSize < SIZE(entries)) {
         auto p = entries.top();
         // cerr << -p.first << "\n";
         entries.pop();
         list.push_back(prepareEntry(documents[p.second], activeTerms));
     }
     reverse(list.begin(), list.end());
-    return list;
+    return {list, (SIZE(minTerm->documents)-1)/pageSize+1};
 }

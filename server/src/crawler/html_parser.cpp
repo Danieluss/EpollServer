@@ -47,6 +47,10 @@ void HTMLParser::addLink(string link) {
     if(SIZE(link) <= 1) {
         return;
     }
+    regex s(" ");
+    if(regex_search(link, s)) {
+        return;
+    }
     regex r("^//.+");
     regex rel("^/[^/].*");
     if(regex_match(link, r)) {
@@ -121,9 +125,23 @@ string HTMLParser::parseTag() {
     // }
     // cerr << "\n";
     if(tag == "a") {
-        for(HTMLAttr a : attributes) {
+        for(HTMLAttr &a : attributes) {
             if(a.name == "href") {
                 addLink(a.value);
+            }
+        }
+    } else if(tag == "meta") {
+        bool valid = false;
+        for(HTMLAttr &a : attributes) {
+            if(a.name == "name" && a.value == "description") {
+                valid = true;
+            }
+        }
+        if(valid) {
+            for(HTMLAttr &a : attributes) {
+                if(a.name == "content") {
+                    description = a.value;
+                }
             }
         }
     }
@@ -265,6 +283,10 @@ string HTMLParser::getUrl() {
     return url;
 }
 
+string HTMLParser::getDescription() {
+    return description;
+}
+
 vector<string> HTMLParser::getWords() {
     return words;
 }
@@ -272,3 +294,4 @@ vector<string> HTMLParser::getWords() {
 vector<string> HTMLParser::getLinks() {
     return links;
 }
+

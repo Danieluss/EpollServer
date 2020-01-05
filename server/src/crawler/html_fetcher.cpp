@@ -29,6 +29,7 @@ pair<string, long> HTMLFetcher::fetch(string url) {
     curl_easy_setopt(curl, CURLOPT_SSL_VERIFYPEER, 0L);
     curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, writeToString);
     curl_easy_setopt(curl, CURLOPT_WRITEDATA, &response);
+    curl_easy_setopt(curl, CURLOPT_TIMEOUT, 10);
     res = curl_easy_perform(curl);
     if(res != CURLE_OK) {
         curl_easy_cleanup(curl);

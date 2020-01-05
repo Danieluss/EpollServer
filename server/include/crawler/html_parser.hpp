@@ -11,6 +11,7 @@ private:
     vector<string> words;
     vector<string> links;
     string title;
+    string description;
     string text;
     string html;
     string url;
@@ -36,6 +37,7 @@ public:
     string getTitle();
     string getText();
     string getUrl();
+    string getDescription();
     vector<string> getWords();
     vector<string> getLinks();
 };

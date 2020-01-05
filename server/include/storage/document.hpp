@@ -8,10 +8,11 @@ using namespace std;
 struct Document {
     string title;
     string url;
+    string description;
     int wordcount;
     unordered_map<int, int> terms;
     Document();
-    Document(string title, string url);
+    Document(string title, string url, string description);
     string sanitizeTitle(string s);
 };
 
