@@ -2,5 +2,4 @@
 
 cd "$(dirname "$0")" || exit
 
-make
-./run_server.sh
+./out/main.out host ${1-0.0.0.0} ${2-10101}

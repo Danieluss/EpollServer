@@ -6,6 +6,6 @@ server:
 	$(MAKE) -C server
 
 client:
-	mvn -f ./client/pom.xml clean package
+	$(MAKE) -C client
 
 .PHONY: all $(TARGETS)
