@@ -11,7 +11,7 @@ int Link::compute_depth() {
     regex r("https?://[A-Za-z\\.]+(.*)");
     smatch m;
     if(!regex_match(url, m, r)) {
-        cerr << url;
+        cerr << "can't compute depth " << url << "\n";
         return 100;
     } 
     string s = m[1].str();

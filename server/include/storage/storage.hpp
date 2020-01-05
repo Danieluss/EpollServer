@@ -31,7 +31,7 @@ public:
     void add(HTMLParser &html);
     void save();
     
-    vector<Entry> query(string query, int limit);
+    pair<vector<Entry>, int> query(int page, int pageSize, string queryString);
     string tolower(string &s);
 };
 

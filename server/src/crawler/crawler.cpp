@@ -17,6 +17,7 @@ void Crawler::load() {
     vector<string> linksVector;
     readObjectFromFile(linksFile, linksVector);
     readObjectFromFile(visitedFile, visited);
+    cerr << SIZE(linksVector) << "\n";
     for(string &s : linksVector) {
         links.push(Link(s));
     }
