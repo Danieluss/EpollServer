@@ -108,6 +108,7 @@ a:visited {
 
 .page {
     float:left;
+    min-width: 3em;
     text-decoration: underline;
     color: cornflowerblue;
 }
