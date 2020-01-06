@@ -159,9 +159,9 @@ void EpollServer::forge_response(int connection_fd) {
         fd_request_map.insert({connection_fd, request_chunk});
     }
 
-    if(fd_request_map[connection_fd].back() == '\n') {
+    if (fd_request_map[connection_fd].back() == '\n') {
         fd_response_map[connection_fd] = get_response(fd_request_map[connection_fd]);
-        fd_pending_response_map[connection_fd] = (char*) fd_response_map[connection_fd].c_str();
+        fd_pending_response_map[connection_fd] = (char *) fd_response_map[connection_fd].c_str();
         event.data.fd = connection_fd;
         event.events = EPOLLOUT | EPOLLET;
         if (epoll_ctl(epoll_fd, EPOLL_CTL_MOD, connection_fd, &event) == -1) {
@@ -175,7 +175,7 @@ void EpollServer::forge_response(int connection_fd) {
 }
 
 void EpollServer::respond(int connection_fd) {
-    char* response = fd_pending_response_map[connection_fd];
+    char *response = fd_pending_response_map[connection_fd];
     int response_count;
     if ((response_count = write(connection_fd, response, strlen(response))) == -1) {
         synch_log.perror("write()");
@@ -184,7 +184,7 @@ void EpollServer::respond(int connection_fd) {
     if (fd_pending_response_map[connection_fd][0] == '\0') {
         close(connection_fd);
 #ifdef DEBUG
-        synch_log.print("Responded to connection %d with \n------\n%s\n------\n", connection_fd,
+        synch_log.print("Responded to and closed connection %d with \n------\n%s\n------\n", connection_fd,
                         fd_response_map[connection_fd].c_str());
 #endif
         fd_request_map.erase(connection_fd);

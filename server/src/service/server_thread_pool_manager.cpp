@@ -16,8 +16,8 @@ void ServerThreadPoolManager::grow(int n_threads) {
 }
 
 void ServerThreadPoolManager::_shrink(int n_threads) {
-    while(servers.size() > (unsigned) n_threads) {
-        EpollServer* server = servers.back();
+    while (servers.size() > (unsigned) n_threads) {
+        EpollServer *server = servers.back();
         servers.pop_back();
         server->stop();
 #ifdef DEBUG
@@ -35,7 +35,8 @@ void ServerThreadPoolManager::shrink(int n_threads) {
 
 
 ServerThreadPoolManager::ServerThreadPoolManager(EpollConfig epollConfig, int lower_bound,
-                                                 int upper_bound) : config(epollConfig), lower_bound(lower_bound), upper_bound(upper_bound) {
+                                                 int upper_bound) : config(epollConfig), lower_bound(lower_bound),
+                                                                    upper_bound(upper_bound) {
     grow(lower_bound);
     run();
 }
@@ -45,7 +46,7 @@ void ServerThreadPoolManager::finish() {
 }
 
 void ServerThreadPoolManager::run() {
-    while(true) {
+    while (true) {
         sleep(1);
     }
 }

@@ -1,5 +1,5 @@
-#ifndef DOCUMENT_HPP
-#define DOCUMENT_HPP
+#ifndef DOCUMENT_H
+#define DOCUMENT_H
 
 #include<bits/stdc++.h>
 
@@ -11,12 +11,16 @@ struct Document {
     string description;
     int wordcount;
     unordered_map<int, int> terms;
+
     Document();
+
     Document(string title, string url, string description);
+
     string sanitizeTitle(string s);
 };
 
-ostream& operator<<(ostream& stream, Document &d);
-istream& operator>>(istream& stream, Document &d);
+ostream &operator<<(ostream &stream, Document &d);
 
-#endif //DOCUMENT_HPP
+istream &operator>>(istream &stream, Document &d);
+
+#endif //DOCUMENT_H

@@ -1,6 +1,5 @@
-#include"storage/document.hpp"
+#include"storage/document.h"
 #include"utils.h"
-#include"utils.cpp"
 
 Document::Document() {
     wordcount = 0;
@@ -13,15 +12,15 @@ Document::Document(string title, string url, string description) : Document() {
 }
 
 string Document::sanitizeTitle(string s) {
-    for(int i=0; i < SIZE(s); i++) {
-        if(s[i] == '\n' && (i > 0 || s[i-1] >= 0)) {
+    for (int i = 0; i < SIZE(s); i++) {
+        if (s[i] == '\n' && (i > 0 || s[i - 1] >= 0)) {
             s[i] = ' ';
         }
     }
     return s;
 }
 
-ostream& operator<<(ostream& stream, Document &d) {
+ostream &operator<<(ostream &stream, Document &d) {
     stream << d.title << "\n";
     stream << d.url << "\n";
     stream << d.description << "\n";
@@ -30,7 +29,7 @@ ostream& operator<<(ostream& stream, Document &d) {
     return stream;
 }
 
-istream& operator>>(istream& stream, Document &d) {
+istream &operator>>(istream &stream, Document &d) {
     string s;
     getline(stream, s);
     getline(stream, d.title);

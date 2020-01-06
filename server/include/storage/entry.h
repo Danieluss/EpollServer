@@ -1,5 +1,5 @@
-#ifndef ENTRY_HPP
-#define ENTRY_HPP
+#ifndef ENTRY_H
+#define ENTRY_H
 
 #include<bits/stdc++.h>
 
@@ -11,6 +11,6 @@ struct Entry {
     string description;
 };
 
-ostream& operator<<(ostream& stream, Entry &e);
+ostream &operator<<(ostream &stream, Entry &e);
 
-#endif //ENTRY_HPP
+#endif //ENTRY_H

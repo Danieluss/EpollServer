@@ -1,25 +1,27 @@
-#include"crawler/html_parser.hpp"
+#include"crawler/html_parser.h"
 
 struct HTMLAttr {
     string name;
     string value;
+
     HTMLAttr() {}
+
     HTMLAttr(string name, string value) : name(name), value(value) {}
 };
 
 inline bool HTMLParser::checkSubstring(string s) {
-    for(int i=0; i < SIZE(s); i++) {
-        if(tolower(html[position+i]) != tolower(s[i])) {
+    for (int i = 0; i < SIZE(s); i++) {
+        if (tolower(html[position + i]) != tolower(s[i])) {
             return false;
-        } 
+        }
     }
     return true;
 }
 
 void HTMLParser::waitForToken(string token) {
-    while(position < SIZE(html)) {
-        if(checkSubstring(token)) {
-            position+=SIZE(token);
+    while (position < SIZE(html)) {
+        if (checkSubstring(token)) {
+            position += SIZE(token);
             return;
         }
         position++;
@@ -27,13 +29,13 @@ void HTMLParser::waitForToken(string token) {
 }
 
 string HTMLParser::waitForTokenAndReturnContent(string token) {
-    string res="";
-    while(position < SIZE(html)) {
-        if(checkSubstring(token)) {
-            position+=SIZE(token);
+    string res = "";
+    while (position < SIZE(html)) {
+        if (checkSubstring(token)) {
+            position += SIZE(token);
             return res;
         }
-        res+=html[position];
+        res += html[position];
         position++;
     }
     return res;
@@ -44,79 +46,79 @@ void HTMLParser::parseComment() {
 }
 
 void HTMLParser::addLink(string link) {
-    if(SIZE(link) <= 1) {
+    if (SIZE(link) <= 1) {
         return;
     }
     regex s(" ");
-    if(regex_search(link, s)) {
+    if (regex_search(link, s)) {
         return;
     }
     regex r("^//.+");
     regex rel("^/[^/].*");
-    if(regex_match(link, r)) {
+    if (regex_match(link, r)) {
         link = "https:" + link;
-    } else if(regex_match(link, rel)) {
+    } else if (regex_match(link, rel)) {
         link = baseurl + link;
     }
-    if(link.back() == '/') {
+    if (link.back() == '/') {
         link.pop_back();
     }
     regex valid("https?://.+");
-    if(regex_match(link, valid)) {
+    if (regex_match(link, valid)) {
         links.push_back(link);
     }
 }
 
 string HTMLParser::parseTag() {
-    if(checkSubstring("!--")) {
-        position+=3;
+    if (checkSubstring("!--")) {
+        position += 3;
         parseComment();
         return "-->";
     }
-    string tag="";
-    if(position < SIZE(html) && html[position] == 0x2f) {
+    string tag = "";
+    if (position < SIZE(html) && html[position] == 0x2f) {
         position++;
         tag = "/";
     }
-    while(position < SIZE(html)) {
+    while (position < SIZE(html)) {
         char c = html[position];
-        if(spaceCharacters.count(c) || c == '>' || c == 0x2f) {
+        if (spaceCharacters.count(c) || c == '>' || c == 0x2f) {
             break;
         }
-        tag+=tolower(c);
+        tag += tolower(c);
         position++;
     }
-    vector<HTMLAttr> attributes;
+    vector <HTMLAttr> attributes;
     HTMLAttr currentAttr;
-    bool afterEquals=false, afterSpace=false;
-    while(position < SIZE(html)) {
+    bool afterEquals = false, afterSpace = false;
+    while (position < SIZE(html)) {
         char c = html[position++];
-        if(spaceCharacters.count(c) || c == 0x2f || c == '>') {
-            if(SIZE(currentAttr.name) && SIZE(currentAttr.value)) {
+        if (spaceCharacters.count(c) || c == 0x2f || c == '>') {
+            if (SIZE(currentAttr.name) && SIZE(currentAttr.value)) {
                 attributes.push_back(currentAttr);
                 currentAttr = HTMLAttr();
                 afterSpace = false;
                 afterEquals = false;
             }
         }
-        if(spaceCharacters.count(c) || c == 0x2f) {
-            if(SIZE(currentAttr.name)) {
+        if (spaceCharacters.count(c) || c == 0x2f) {
+            if (SIZE(currentAttr.name)) {
                 afterSpace = true;
             }
             continue;
-        } else if(c == '>') {
+        } else if (c == '>') {
             break;
-        } else if(c == '=') {
+        } else if (c == '=') {
             afterEquals = true;
-        } else if(c == '\'' || c == '"') {
+        } else if (c == '\'' || c == '"') {
             currentAttr.value = waitForTokenAndReturnContent(string("") + c);
-        } else if(afterEquals) {
-            currentAttr.value+= tolower(c);
-        } else if(afterSpace) {
+        } else if (afterEquals) {
+            currentAttr.value += tolower(c);
+        } else if (afterSpace) {
             afterSpace = false;
             currentAttr.name = string("") + char(tolower(c));
         } else {
-            currentAttr.name+= tolower(c);
+            currentAttr.name += tolower(c);
         }
     }
     // cerr << tag << "\t";
@@ -124,22 +126,22 @@ string HTMLParser::parseTag() {
     //     cerr << a.name << "=" << a.value << ", ";
     // }
     // cerr << "\n";
-    if(tag == "a") {
-        for(HTMLAttr &a : attributes) {
-            if(a.name == "href") {
+    if (tag == "a") {
+        for (HTMLAttr &a : attributes) {
+            if (a.name == "href") {
                 addLink(a.value);
             }
         }
-    } else if(tag == "meta") {
+    } else if (tag == "meta") {
         bool valid = false;
-        for(HTMLAttr &a : attributes) {
-            if(a.name == "name" && a.value == "description") {
+        for (HTMLAttr &a : attributes) {
+            if (a.name == "name" && a.value == "description") {
                 valid = true;
             }
         }
-        if(valid) {
-            for(HTMLAttr &a : attributes) {
-                if(a.name == "content") {
+        if (valid) {
+            for (HTMLAttr &a : attributes) {
+                if (a.name == "content") {
                     description = a.value;
                 }
             }
@@ -149,53 +151,53 @@ string HTMLParser::parseTag() {
 }
 
 string HTMLParser::waitForTagAndReturnContent(string tag) {
-    string res="";
-    while(position < SIZE(html)) {
+    string res = "";
+    while (position < SIZE(html)) {
         char c = html[position++];
-        if(c == '<') {
+        if (c == '<') {
             string t = parseTag();
-            if(t == tag) {
+            if (t == tag) {
                 return res;
             }
         }
-        res+=c;
+        res += c;
     }
     return res;
 }
 
 void HTMLParser::addWord(string &word) {
-    if(word != "") {
+    if (word != "") {
         words.push_back(word);
     }
-    word="";
+    word = "";
 }
 
 string HTMLParser::getBaseUrl(string url) {
     // cerr << url << "\n";
     regex r("(https?://[A-Za-z\\.]+)/.*");
     smatch m;
-    if(regex_match(url, m, r)) {
+    if (regex_match(url, m, r)) {
         return m[1].str();
     }
     return "";
 }
 
 void HTMLParser::sanitize_html() {
-    for(; position < SIZE(html); position++) {
-        if(html[position] == '<') {
+    for (; position < SIZE(html); position++) {
+        if (html[position] == '<') {
             break;
-        } 
+        }
     }
 }
 
 void HTMLParser::parseText(string &word) {
     char c = html[position];
-    if(spaceCharacters.count(c) == 0 || (SIZE(text) && spaceCharacters.count(text.back()) == 0)) {
-        text+=c;
+    if (spaceCharacters.count(c) == 0 || (SIZE(text) && spaceCharacters.count(text.back()) == 0)) {
+        text += c;
     }
-    if(isalnum(c)) {
-        word+=c;
-    } else if(c < 0 && position+1 < SIZE(html)) {
+    if (isalnum(c)) {
+        word += c;
+    } else if (c < 0 && position + 1 < SIZE(html)) {
         position++;
         char d = html[position];
         string s;
@@ -205,16 +207,16 @@ void HTMLParser::parseText(string &word) {
         u16string w;
         try {
             w = convert.from_bytes(s);
-        } catch(exception &e) {
+        } catch (exception &e) {
             converted = false;
         }
-        if(converted && iswalpha(w[0])) {
-            word+=c;
-            word+=html[position];
+        if (converted && iswalpha(w[0])) {
+            word += c;
+            word += html[position];
         } else {
             addWord(word);
         }
-        text+=html[position];
+        text += html[position];
     } else {
         addWord(word);
     }
@@ -230,9 +232,9 @@ HTMLParser::HTMLParser(string html, string url) : html(html), url(url) {
 }
 
 void HTMLParser::parse() {
-    string word="";
-    while(position < SIZE(html)) {
-        if(html[position] != '<') {
+    string word = "";
+    while (position < SIZE(html)) {
+        if (html[position] != '<') {
             parseText(word);
             continue;
         }
@@ -240,11 +242,11 @@ void HTMLParser::parse() {
         position++;
         string t = parseTag();
         // cerr << t << "\n";
-        if(t == "<script>") {
+        if (t == "<script>") {
             waitForToken("</script>");
-        } else if(t == "<style>") {
+        } else if (t == "<style>") {
             waitForToken("</style>");
-        } else if(t == "<title>") {
+        } else if (t == "<title>") {
             title = waitForTagAndReturnContent("</title>");
         }
     }
@@ -257,11 +259,11 @@ void HTMLParser::report() {
     cerr << SIZE(links) << "\n";
     // cout << text << "\n";
     cout << "Words:\n";
-    int counter=0;
-    for(string w : words) {
+    int counter = 0;
+    for (string w : words) {
         cout << w << ", ";
         counter++;
-        if(counter > 10) {
+        if (counter > 10) {
             break;
         }
     }
@@ -287,11 +289,11 @@ string HTMLParser::getDescription() {
     return description;
 }
 
-vector<string> HTMLParser::getWords() {
+vector <string> HTMLParser::getWords() {
     return words;
 }
 
-vector<string> HTMLParser::getLinks() {
+vector <string> HTMLParser::getLinks() {
     return links;
 }
 

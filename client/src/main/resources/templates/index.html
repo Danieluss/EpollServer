@@ -3,31 +3,49 @@
 <head>
     <title>Search engine</title>
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css"
+          integrity="sha384-HSMxcRTRxnN+Bdg0JdbxYKrThecOKuH5zCYotlSAcp1+c8xmyTe9GYg1l9a69psu" crossorigin="anonymous">
     <link href="../static/css/main.css" th:href="@{/css/main.css}" rel="stylesheet"/>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"
+            integrity="sha384-aJ21OjlMXNL5UyIl/XNwTMqvzeRMZH2w8c5cRVpzpU8Y5bApTppSuUkhZXN0VxHd"
+            crossorigin="anonymous"></script>
 </head>
 <body>
-<form th:action="@{/}" method="post" class="searchForm">
-    <input type="text" th:value="${searchQuery}" name="searchQuery" class="searchField"/>
+<form th:action="@{/}" method="post" class="searchForm col-lg-1">
+    <input type="text" th:value="${searchQuery}" name="searchQuery" class="col-lg-4 searchField"/>
     <input type="submit" class="searchButton"/>
 </form>
-<table class="results" th:if="${searchResults != null}">
+<div class="col-lg-4" th:text="${searchError}">
+</div>
+<table class="col-lg-4 results">
     <thead>
-    <tr th:if="${searchResults != null && !searchResults.empty}">
+    <tr th:if="${totalPages != 0}">
         <th class="maximize">Search results</th>
-    </tr>
-    <tr th:if="${searchError != null}">
-        <th th:text="${searchError}" class="errors"></th>
     </tr>
     </thead>
     <tbody>
-    <tr th:if="${searchResults == null || searchResults.isEmpty()}">
+    <tr th:if="${totalPages == null || totalPages == 0}">
         <td> No search results</td>
     </tr>
     <tr th:if="${searchResults != null && !searchResults.isEmpty()}" th:each="searchResult, _ : ${searchResults}">
-        <td class="result"><a th:href="${searchResult.url}"><div class="maximize"><span th:text="${searchResult.description}"> Title </span></div></a></td>
+        <td class="result"><a th:href="${searchResult.url}">
+            <div class="maximize">
+                <div class="title" th:text="${searchResult.title}"></div>
+                <div class="url" th:text="${searchResult.url}"></div>
+                <div class="description" th:text="${searchResult.description}"></div>
+            </div>
+        </a></td>
     </tr>
     </tbody>
 </table>
-
+<form>
+    <div>
+        <div th:each="page : ${pages}" class="page">
+            <a th:href="@{/(searchQuery=${searchQuery}, currentPage=${page})}" th:text="${page + 1}" th:classappend="${page == currentPage} ? currentPage : page">
+            </a>
+        </div>
+    </div>
+</form>
 </body>
 </html>

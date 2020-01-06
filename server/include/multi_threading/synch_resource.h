@@ -1,5 +1,6 @@
 #ifndef SEARCHENGINE_RESOURCE_H
 #define SEARCHENGINE_RESOURCE_H
+
 #include <mutex>
 #include <shared_mutex>
 #include <utility>
@@ -11,7 +12,7 @@ class SynchResource {
 
 public:
 
-    SynchResource(T value): value(value) {
+    SynchResource(T value) : value(value) {
     }
 
     void write(T value) {
@@ -25,6 +26,7 @@ public:
     }
 
     operator T() { return read(); }
+
     operator T() const { return read(); }
 
 };

@@ -12,14 +12,13 @@
 #include "service/epoll_config.h"
 
 
-
 class EpollServer {
 
     int port, backlog, epoll_fd, server_fd;
     std::string host_addr;
     std::unordered_map<int, std::string> fd_request_map;
     std::unordered_map<int, std::string> fd_response_map;
-    std::unordered_map<int, char*> fd_pending_response_map;
+    std::unordered_map<int, char *> fd_pending_response_map;
     std::function<std::string(std::string)> get_response;
     struct epoll_event *events;
     SynchResource<bool> alive{true};

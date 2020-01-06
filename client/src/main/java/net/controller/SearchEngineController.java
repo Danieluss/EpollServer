@@ -1,10 +1,7 @@
 package net.controller;
 
-import net.data.SearchResult;
+import net.data.SearchResultWrapper;
 import net.service.SearchService;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -19,6 +16,7 @@ import java.util.stream.IntStream;
 @Controller
 public class SearchEngineController {
 
+    private static final Integer DEFAULT_PAGE_SIZE = 10;
     private final SearchService searchService;
 
     public SearchEngineController(SearchService searchService) {
@@ -26,10 +24,19 @@ public class SearchEngineController {
     }
 
     @RequestMapping(value = "/", method = {RequestMethod.GET, RequestMethod.POST})
-    public String search(@RequestParam(required = false) String searchQuery, Model model) throws IOException {
+    public String search(@RequestParam(required = false) String searchQuery, @RequestParam(required = false) Integer currentPage, Model model) throws IOException {
         model.addAttribute("searchQuery", searchQuery);
+        if (currentPage == null) {
+            currentPage = 0;
+        }
         if (searchQuery != null && !searchQuery.isEmpty()) {
-            model.addAttribute("searchResults", searchService.requestSearch(searchQuery));
+            SearchResultWrapper searchResultWrapper = searchService.requestSearch(currentPage, DEFAULT_PAGE_SIZE, searchQuery);
+            List<Integer> pages = IntStream.range(0, Math.min(searchResultWrapper.getTotalPages(), 10)).boxed().collect(Collectors.toList());
+            model.addAttribute("searchResults", searchResultWrapper.getSearchResults());
+            model.addAttribute("totalPages", searchResultWrapper.getTotalPages());
+            model.addAttribute("currentPage", currentPage);
+            System.out.println(currentPage);
+            model.addAttribute("pages", pages);
         } else {
             model.addAttribute("searchError", "Search query is empty!");
         }

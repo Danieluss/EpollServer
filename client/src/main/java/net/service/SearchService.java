@@ -2,11 +2,7 @@ package net.service;
 
 import lombok.extern.slf4j.Slf4j;
 import net.data.SearchResult;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Bean;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageImpl;
-import org.springframework.data.domain.PageRequest;
+import net.data.SearchResultWrapper;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.PostConstruct;
@@ -16,7 +12,6 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.net.Socket;
-import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.regex.Matcher;
@@ -28,19 +23,23 @@ public class SearchService {
 
     @Resource
     Socket clientSocket;
-    private Pattern responsePattern;
-    private final static String FIELD_SEPARATOR = ";";
-    private final static String ROW_SEPARATOR = "\\n";
-    private final static String RESPONSE_PATTERN = "(?<url>.+)" + FIELD_SEPARATOR + "(?<title>.+)";
+    private Pattern resultPattern;
+    private Pattern responseHeaderPattern;
+    private final static String HEADER_SEPARATOR = "-\n";
+    private final static String BODY_SEPARATOR = ";\n";
+    private final static String RESPONSE_HEADER_PATTERN = "(?<status>#.+?)" + HEADER_SEPARATOR + "(?<totalPages>[0-9]+?)" + HEADER_SEPARATOR;
+    private final static String RESULT_PATTERN = "(?<url>.+?)" + BODY_SEPARATOR + "(?<title>.+?)" + BODY_SEPARATOR + "(?<description>.+?)" + BODY_SEPARATOR;
 
     @PostConstruct
     public void init() throws IOException {
-        responsePattern = Pattern.compile(RESPONSE_PATTERN);
+        resultPattern = Pattern.compile(RESULT_PATTERN);
+        responseHeaderPattern = Pattern.compile(RESPONSE_HEADER_PATTERN);
     }
 
-    public List<SearchResult> requestSearch(String searchQuery) throws IOException {
+    public SearchResultWrapper requestSearch(int page, int pageSize, String searchQuery) throws IOException {
         PrintWriter out = new PrintWriter(clientSocket.getOutputStream(), true);
         BufferedReader in = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
+        searchQuery = page + " " + pageSize + " " + searchQuery;
         log.info("---> " + searchQuery);
         out.println(searchQuery);
         StringBuilder responseBuilder = new StringBuilder();
@@ -50,7 +49,7 @@ public class SearchService {
             responseBuilder.append('\n');
         }
         String response = responseBuilder.toString();
-        List<SearchResult> parsedResponse = parseResponse(response);
+        SearchResultWrapper parsedResponse = parseResponse(response);
         in.close();
         out.close();
         clientSocket.close();
@@ -58,17 +57,24 @@ public class SearchService {
 
     }
 
-    private List<SearchResult> parseResponse(String response) {
+    private SearchResultWrapper parseResponse(String response) {
         log.info("got response: \n" + response);
-        Matcher matcher = responsePattern.matcher(response);
+        Matcher matcher = responseHeaderPattern.matcher(response);
+        SearchResultWrapper searchResultWrapper = new SearchResultWrapper();
+        while (matcher.find()) {
+            searchResultWrapper.setTotalPages(Integer.parseInt(matcher.group("totalPages")));
+        }
+        matcher = resultPattern.matcher(response);
         List<SearchResult> resultList = new LinkedList<>();
         while (matcher.find()) {
             String title = matcher.group("title");
             String url = matcher.group("url");
-            resultList.add(new SearchResult(url + " " + title, url));
+            String description = matcher.group("description");
+            resultList.add(new SearchResult(url, title, description));
         }
+        searchResultWrapper.setSearchResults(resultList);
         log.info("<--- " + resultList.toString());
-        return resultList;
+        return searchResultWrapper;
     }
 
 }

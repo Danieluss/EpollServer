@@ -10,7 +10,7 @@ class SynchCounter {
 
 public:
 
-    SynchCounter& zero() {
+    SynchCounter &zero() {
         std::unique_lock lock(mutex);
         value = 0;
         return *this;

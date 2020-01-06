@@ -14,9 +14,9 @@ void DynamicThreadPoolExecutor::worker_thread() {
             ready_threads++;
             std::unique_lock<decltype(mutex)> lock(mutex);
             if (tasks.empty() && kill_next == 0) {
-                std::cout<<std::this_thread::get_id()<<" is sleeping"<<std::endl;
+                std::cout << std::this_thread::get_id() << " is sleeping" << std::endl;
                 cond_var.wait(lock, [&] { return !tasks.empty() || kill_next > 0; });
-                std::cout<<std::this_thread::get_id()<<" woke up"<<std::endl;
+                std::cout << std::this_thread::get_id() << " woke up" << std::endl;
             }
             if (kill_next > 0) {
                 kill_next--;
@@ -29,9 +29,9 @@ void DynamicThreadPoolExecutor::worker_thread() {
             ready_threads--;
         }
         task();
-        std::cout<<std::this_thread::get_id()<<" executed a request "<<std::endl;
+        std::cout << std::this_thread::get_id() << " executed a request " << std::endl;
     }
-    std::cout<<"Thread "<<std::this_thread::get_id()<<" is dying"<<std::endl;
+    std::cout << "Thread " << std::this_thread::get_id() << " is dying" << std::endl;
 }
 
 void DynamicThreadPoolExecutor::grow(int n_threads) {
@@ -53,7 +53,7 @@ void DynamicThreadPoolExecutor::grow(int n_threads) {
             }
             for (int i = 0; i < n_threads; ++i) {
                 std::thread thread(&DynamicThreadPoolExecutor::worker_thread, this);
-                std::cout<<"Creating "<<thread.get_id()<<std::endl;
+                std::cout << "Creating " << thread.get_id() << std::endl;
                 thread.detach();
             }
             curr_threads += n_threads;
@@ -69,7 +69,7 @@ void DynamicThreadPoolExecutor::shrink(int n_threads) {
             n_threads = min;
         }
         if (n_threads > 0) {
-            std::cout<<"Ordering "<<n_threads<<" to be killed"<<std::endl;
+            std::cout << "Ordering " << n_threads << " to be killed" << std::endl;
             kill_next += n_threads;
         }
     }
@@ -77,13 +77,13 @@ void DynamicThreadPoolExecutor::shrink(int n_threads) {
 }
 
 void DynamicThreadPoolExecutor::enqueue_task(std::function<void()> task) {
-    std::cout<<"Enqueuing task"<<std::endl;
+    std::cout << "Enqueuing task" << std::endl;
     {
         std::lock_guard<decltype(mutex)> lock(mutex);
         tasks.emplace_back(task);
-        std::cout<<curr_threads<<" "<<ready_threads<<"<<<<<<<<<<"<<std::endl;
+        std::cout << curr_threads << " " << ready_threads << "<<<<<<<<<<" << std::endl;
         if (ready_threads == 0) {
-           grow(1);
+            grow(1);
         }
     }
     cond_var.notify_one();
@@ -94,7 +94,7 @@ void DynamicThreadPoolExecutor::cancel_pending() {
         std::lock_guard<decltype(mutex)> lock(mutex);
         tasks.clear();
     }
-    std::cout<<"Cancelling pending requests "<<std::endl;
+    std::cout << "Cancelling pending requests " << std::endl;
 }
 
 void DynamicThreadPoolExecutor::finish() {
@@ -105,10 +105,10 @@ void DynamicThreadPoolExecutor::finish() {
         finished = true;
     }
     cond_var.notify_all();
-    std::cout<<"Killing all threads"<<std::endl;
+    std::cout << "Killing all threads" << std::endl;
 }
 
 DynamicThreadPoolExecutor::~DynamicThreadPoolExecutor() {
     finish();
-    std::cout<<"Destructing DynamicThreadPoolExecutor"<<std::endl;
+    std::cout << "Destructing DynamicThreadPoolExecutor" << std::endl;
 }

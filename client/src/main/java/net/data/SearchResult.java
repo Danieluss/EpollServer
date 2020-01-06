@@ -7,7 +7,8 @@ import lombok.Data;
 @AllArgsConstructor
 public class SearchResult {
 
-    private String description;
     private String url;
+    private String title;
+    private String description;
 
 }

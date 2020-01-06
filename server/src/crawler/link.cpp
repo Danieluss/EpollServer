@@ -1,4 +1,4 @@
-#include"crawler/link.hpp"
+#include"crawler/link.h"
 #include<regex>
 #include<assert.h>
 #include<iostream>
@@ -10,14 +10,14 @@ Link::Link(string url) : url(url) {
 int Link::compute_depth() {
     regex r("https?://[A-Za-z\\.]+(.*)");
     smatch m;
-    if(!regex_match(url, m, r)) {
+    if (!regex_match(url, m, r)) {
         cerr << "can't compute depth " << url << "\n";
         return 100;
-    } 
+    }
     string s = m[1].str();
-    int res=0;
-    for(char c : s) {
-        if(c == '/') {
+    int res = 0;
+    for (char c : s) {
+        if (c == '/') {
             res++;
         }
     }

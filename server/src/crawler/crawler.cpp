@@ -1,11 +1,10 @@
-#include"crawler/crawler.hpp"
+#include"crawler/crawler.h"
 #include"utils.h"
-#include"utils.cpp"
 
 void Crawler::save() {
     storage.save();
-    vector<string> linksVector;
-    while(!links.empty()) {
+    vector <string> linksVector;
+    while (!links.empty()) {
         linksVector.push_back(links.top().url);
         links.pop();
     }
@@ -14,11 +13,11 @@ void Crawler::save() {
 }
 
 void Crawler::load() {
-    vector<string> linksVector;
+    vector <string> linksVector;
     readObjectFromFile(linksFile, linksVector);
     readObjectFromFile(visitedFile, visited);
     cerr << SIZE(linksVector) << "\n";
-    for(string &s : linksVector) {
+    for (string &s : linksVector) {
         links.push(Link(s));
     }
 }
@@ -27,9 +26,9 @@ Crawler::Crawler() {
     load();
 }
 
-void Crawler::updateLinks(vector<string> links) {
-    for(string l : links) {
-        if(!visited.count(l)) {
+void Crawler::updateLinks(vector <string> links) {
+    for (string l : links) {
+        if (!visited.count(l)) {
             visited.insert(l);
             this->links.push(Link(l));
         }
@@ -37,8 +36,8 @@ void Crawler::updateLinks(vector<string> links) {
 }
 
 void Crawler::run(int limit) {
-    int counter=0;
-    while(!links.empty()) {
+    int counter = 0;
+    while (!links.empty()) {
         Link l = links.top();
         links.pop();
         cerr << "Links size " << SIZE(links) << "\n";
@@ -49,7 +48,7 @@ void Crawler::run(int limit) {
             auto res = htmlFetcher.fetch(l.url);
             html = res.first;
             code = res.second;
-        } catch(runtime_error &re) {
+        } catch (runtime_error &re) {
             cerr << re.what() << "\n";
             continue;
         }
@@ -59,12 +58,12 @@ void Crawler::run(int limit) {
         htmlParser.report();
         updateLinks(htmlParser.getLinks());
 
-        if(code < 300) {
+        if (code < 300) {
             cerr << "adding\n";
             storage.add(htmlParser);
         }
         counter++;
-        if(counter > limit) {
+        if (counter > limit) {
             break;
         }
     }

@@ -12,6 +12,7 @@ class SynchLogger {
 
     template<typename T>
     friend const SynchLogger &operator<<(const SynchLogger &logger, const T &value);
+
 public:
     template<typename... Args>
     void print(const char *format, Args... args) const {
@@ -28,7 +29,7 @@ public:
     template<typename... Args>
     void perror(const char *msg) const {
         std::unique_lock lock(mutex);
-        std::cerr<<"["<<std::this_thread::get_id()<<"] - "<<msg<<std::endl;
+        std::cerr << "[" << std::this_thread::get_id() << "] - " << msg << std::endl;
         perror("");
     }
 };
@@ -38,7 +39,7 @@ const SynchLogger synch_log;
 template<typename T>
 const SynchLogger &operator<<(const SynchLogger &logger, const T &value) {
     std::unique_lock lock(logger.mutex);
-    std::cout<<value;
+    std::cout << value;
     return logger;
 }
 

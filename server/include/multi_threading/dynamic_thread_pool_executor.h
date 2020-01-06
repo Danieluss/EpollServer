@@ -21,7 +21,7 @@ class DynamicThreadPoolExecutor {
 
     std::recursive_mutex mutex;
     std::condition_variable_any cond_var;
-    std::deque<std::function<void()>> tasks;
+    std::deque <std::function<void()>> tasks;
 
     void worker_thread();
 

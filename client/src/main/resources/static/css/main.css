@@ -64,6 +64,7 @@ a:visited {
 
 .searchForm * {
     padding: 0.5em;
+    margin: auto;
 }
 
 .searchField {
@@ -78,6 +79,46 @@ a:visited {
     text-align: center;
     text-decoration: none;
     display: inline-block;
+    cursor: pointer;
+    height: 38px;
+}
+
+
+.results tr .url {
+    font-size: 0.8em;
+    color: cornflowerblue;
+}
+
+.results tr .title {
+    font-size: 1.2em;
+}
+
+.results tr .description {
+
+}
+
+.results tr a:hover {
+    text-decoration: none;
+    color: black;
+}
+
+.results tr a:hover .url {
+    color: #47639f;
+}
+
+.page {
+    float:left;
+    text-decoration: underline;
+    color: cornflowerblue;
+}
+
+.page:hover {
+    color: #47639f;
+}
+
+.currentPage {
+    font-size: 1.2em;
+    font-weight: bold;
 }
 
 body {

@@ -13,7 +13,8 @@ struct EpollConfig {
     std::function<std::string(std::string)> get_response;
     int max_events;
 
-    EpollConfig(std::string host_addr, int port, int backlog, std::function<std::string(std::string)> get_response, int max_events);
+    EpollConfig(std::string host_addr, int port, int backlog, std::function<std::string(std::string)> get_response,
+                int max_events);
 };
 
 #endif //SEARCHENGINE_EPOLL_CONFIG_H

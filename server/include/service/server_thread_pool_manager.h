@@ -10,7 +10,7 @@ class ServerThreadPoolManager {
     EpollConfig config;
     volatile int lower_bound;
     volatile int upper_bound;
-    std::vector<EpollServer*> servers;
+    std::vector<EpollServer *> servers;
 
     void grow(int n_threads);
 
@@ -22,7 +22,8 @@ class ServerThreadPoolManager {
 
 public:
 
-    ServerThreadPoolManager(EpollConfig epollConfig, int lower_bound = std::thread::hardware_concurrency(), int upper_bound = std::thread::hardware_concurrency());
+    ServerThreadPoolManager(EpollConfig epollConfig, int lower_bound = std::thread::hardware_concurrency(),
+                            int upper_bound = std::thread::hardware_concurrency());
 
     void finish();
 
