@@ -35,7 +35,6 @@ public class SearchEngineController {
             model.addAttribute("searchResults", searchResultWrapper.getSearchResults());
             model.addAttribute("totalPages", searchResultWrapper.getTotalPages());
             model.addAttribute("currentPage", currentPage);
-            System.out.println(currentPage);
             model.addAttribute("pages", pages);
         } else {
             model.addAttribute("searchError", "Search query is empty!");
