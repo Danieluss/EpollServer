@@ -22,7 +22,7 @@ string read_file(string filename) {
 }
 
 int main(int argc, char **argv) {
-    std::string usage_string = "Usage: bash -c main.out { populate | host } { $1==populate ? start_url : } { $1==populate ? limit_int : }";
+    std::string usage_string = "Usage: bash -c main.out { populate | host } { $1==populate ? start_url : ip } { $1==populate ? limit_int : port } { $1==populate ? number_of_threads : }";
     std::string wrong_request_string = "#ERROR\nMalformed request\n";
     if (argc < 4) {
         std::cerr << usage_string << std::endl;
@@ -58,13 +58,14 @@ int main(int argc, char **argv) {
                                         },
                                         64});
     } else if (std::string(argv[1]) == "populate") {
-        if (argc < 4) {
+        if (argc < 5) {
             std::cerr << usage_string << std::endl;
             return -1;
         }
+        int fourth_arg = stoi(argv[4]);
         Crawler crawler;
         crawler.updateLinks({second_arg});
-        crawler.run(third_arg);
+        crawler.run(third_arg, fourth_arg);
     } else {
         std::cerr << usage_string << std::endl;
         return -1;

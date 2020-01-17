@@ -27,20 +27,30 @@ Crawler::Crawler() {
 }
 
 void Crawler::updateLinks(vector <string> links) {
-    for (string l : links) {
-        if (!visited.count(l)) {
-            visited.insert(l);
-            this->links.push(Link(l));
+    {
+        lock_guard<mutex> lock(linksMutex);
+        for (string l : links) {
+            if (!visited.count(l)) {
+                visited.insert(l);
+                this->links.push(Link(l));
+            }
         }
     }
+    cv.notify_all();
 }
 
-void Crawler::run(int limit) {
-    int counter = 0;
-    while (!links.empty()) {
-        Link l = links.top();
-        links.pop();
-        cerr << "Links size " << SIZE(links) << "\n";
+Link Crawler::getNextLink() {
+    unique_lock<mutex> lock(linksMutex);
+    cv.wait(lock, [&](){ return !links.empty(); });
+    Link l = links.top();
+    links.pop();
+    cerr << "Links size " << SIZE(links) << "\n";
+    return l;
+}
+
+void Crawler::runSingleThread() {
+    while (true) {
+        Link l = getNextLink();
 
         string html;
         int code;
@@ -59,13 +69,30 @@ void Crawler::run(int limit) {
         updateLinks(htmlParser.getLinks());
 
         if (code < 300) {
+            lock_guard<mutex> lock(storageMutex);
             cerr << "adding\n";
             storage.add(htmlParser);
         }
-        counter++;
-        if (counter > limit) {
-            break;
+        cerr << "STH\n";
+        {
+            lock_guard<mutex> lock(limitMutex);
+            limit--;
+            cerr << "Left: " << limit << "\n";
+            if (limit < 0) {
+                break;
+            }
         }
+    }
+}
+
+void Crawler::run(int limit, int numThreads) {
+    this->limit = limit;
+    vector<thread> threads;
+    for(int i=0; i < numThreads; i++) {
+        threads.push_back(thread(&Crawler::runSingleThread, this));
+    }
+    for(int i=0; i < numThreads; i++) {
+        threads[i].join();
     }
     save();
 }

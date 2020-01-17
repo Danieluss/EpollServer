@@ -14,17 +14,24 @@ private:
     unordered_set <string> visited;
     string linksFile = "links";
     string visitedFile = "visited";
+    int limit;
+    mutex storageMutex, linksMutex, limitMutex;
+    condition_variable cv;
 
     void save();
 
     void load();
+
+    void runSingleThread();
+
+    Link getNextLink();
 
 public:
     Crawler();
 
     void updateLinks(vector <string> links);
 
-    void run(int limit);
+    void run(int limit, int numThreads);
 };
 
 #endif //CRAWLER_H
