@@ -22,7 +22,7 @@ make
 
 #### Build & run
 ```
-./build&run.sh
+./build-run.sh
 ```
 
 
@@ -41,7 +41,7 @@ make
 
 #### Build & run
 ```
-./build&run.sh
+./build-run.sh
 ```
 
 
