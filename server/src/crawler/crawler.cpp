@@ -73,7 +73,6 @@ void Crawler::runSingleThread() {
             cerr << "adding\n";
             storage.add(htmlParser);
         }
-        cerr << "STH\n";
         {
             lock_guard<mutex> lock(limitMutex);
             limit--;

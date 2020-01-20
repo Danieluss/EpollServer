@@ -21,7 +21,26 @@ string read_file(string filename) {
     return contents;
 }
 
+void shows(string s) {
+    for(int i=0; i < SIZE(s); i++) {
+        if(s[i] >= 10) {
+            cout << s[i];
+        }
+    }
+    cout << "\n";
+}
+
 int main(int argc, char **argv) {
+    // string url = "http://www.google.ac";
+    // HTMLFetcher hf;
+    // HTMLParser p(hf.fetch(url).first, url);
+    // p.parse();
+    // Document d(p.getTitle(), p.getUrl(), p.getDescription());
+    // shows(d.title);
+    // shows(d.url);
+    // shows(d.description);
+    // cout << p.getDomainExtension(url + "/abc/def") << "\n";
+    // exit(0);
     std::string usage_string = "Usage: bash -c main.out { populate | host } { $1==populate ? start_url : ip } { $1==populate ? limit_int : port } { $1==populate ? number_of_threads : }";
     std::string wrong_request_string = "#ERROR\nMalformed request\n";
     if (argc < 4) {

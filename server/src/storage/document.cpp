@@ -13,7 +13,7 @@ Document::Document(string title, string url, string description) : Document() {
 
 string Document::sanitizeTitle(string s) {
     for (int i = 0; i < SIZE(s); i++) {
-        if (s[i] == '\n' && (i > 0 || s[i - 1] >= 0)) {
+        if (s[i] == '\n' || s[i] == '\r') {
             s[i] = ' ';
         }
     }
