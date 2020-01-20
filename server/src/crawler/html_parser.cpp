@@ -286,6 +286,17 @@ string HTMLParser::getUrl() {
 }
 
 string HTMLParser::getDescription() {
+    if(description == "") {
+        for(int i=0; i < min(200, (int)text.size()); i++) {
+            if(text[i] < 0 && i+1 < (int)text.size()) {
+                description+=text[i];
+                i++;
+                description+=text[i];
+            } else if(text[i] >= 0) {
+                description+=text[i];
+            }
+        }
+    }
     return description;
 }
 
