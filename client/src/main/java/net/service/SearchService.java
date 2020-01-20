@@ -28,7 +28,7 @@ public class SearchService {
     private final static String HEADER_SEPARATOR = "-\n";
     private final static String BODY_SEPARATOR = ";\n";
     private final static String RESPONSE_HEADER_PATTERN = "(?<status>#.+?)" + HEADER_SEPARATOR + "(?<totalPages>[0-9]+?)" + HEADER_SEPARATOR;
-    private final static String RESULT_PATTERN = "(?<url>.+?)" + BODY_SEPARATOR + "(?<title>.+?)" + BODY_SEPARATOR + "(?<description>.+?)" + BODY_SEPARATOR;
+    private final static String RESULT_PATTERN = "(?<url>.+?)" + BODY_SEPARATOR + "(?<title>.*?)" + BODY_SEPARATOR + "(?<description>.*?)" + BODY_SEPARATOR;
 
     @PostConstruct
     public void init() throws IOException {
