@@ -41,8 +41,8 @@
 </table>
 <form>
     <div>
-        <div th:each="page : ${pages}" class="page">
-            <a th:href="@{/(searchQuery=${searchQuery}, currentPage=${page})}" th:text="${page + 1}" th:classappend="${page == currentPage} ? currentPage : page">
+        <div th:each="page : ${pages}" class="page" th:classappend="${page == currentPage} ? currentPage : page">
+            <a th:href="@{/(searchQuery=${searchQuery}, currentPage=${page})}" th:text="${page + 1}">
             </a>
         </div>
     </div>

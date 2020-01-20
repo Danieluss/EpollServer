@@ -107,19 +107,29 @@ a:visited {
 }
 
 .page {
+    min-height: 48px;
     float:left;
-    min-width: 3em;
     text-decoration: underline;
+    padding: 1em 1em;
+}
+
+.currentPage a {
+    color: black !important;
+}
+
+.page a {
     color: cornflowerblue;
 }
 
-.page:hover {
+.page:hover a {
     color: #47639f;
 }
 
 .currentPage {
-    font-size: 1.2em;
+    min-height: 48px;
+    text-decoration: underline;
     font-weight: bold;
+    padding: 1em 1em;
 }
 
 body {
