@@ -19,6 +19,7 @@ private:
     int position;
     set<int> spaceCharacters{0x20, 0x9, 0xa, 0xc, 0xff, 0xd};
     wstring_convert<codecvt_utf8_utf16<char16_t>, char16_t> convert;
+    set<string> domainExtensions{"pl", "com", "uk", "de", "org", "edu", "io"};
 
     inline bool checkSubstring(string s);
 
@@ -37,6 +38,8 @@ private:
     void addWord(string &word);
 
     string getBaseUrl(string url);
+
+    string getDomainExtension(string url);
 
     void sanitize_html();
 

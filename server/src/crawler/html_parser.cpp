@@ -64,8 +64,12 @@ void HTMLParser::addLink(string link) {
         link.pop_back();
     }
     regex valid("https?://.+");
-    if (regex_match(link, valid)) {
-        links.push_back(link);
+    smatch m;
+    if (regex_match(link, m, valid)) {
+        string domainExtension = getDomainExtension(link);
+        if(domainExtensions.count(domainExtension)) {
+            links.push_back(link);
+        }
     }
 }
 
@@ -174,9 +178,19 @@ void HTMLParser::addWord(string &word) {
 
 string HTMLParser::getBaseUrl(string url) {
     // cerr << url << "\n";
-    regex r("(https?://[A-Za-z\\.]+)/.*");
+    regex r("^(https?://[A-Za-z\\.]+)");
     smatch m;
-    if (regex_match(url, m, r)) {
+    if (regex_search(url, m, r)) {
+        return m[1].str();
+    }
+    return "";
+}
+
+string HTMLParser::getDomainExtension(string url) {
+    string baseurl = getBaseUrl(url);
+    regex r("\\.([A-Za-z]+)$");
+    smatch m;
+    if(regex_search(baseurl, m, r)) {
         return m[1].str();
     }
     return "";
